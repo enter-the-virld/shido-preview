@@ -38,6 +38,7 @@
     { id: "house", href: "house.html", en: "The House", fr: "La Maison", es: "La Casa", ar: "الدار" },
     { id: "practice", href: "practice.html", en: "Yoga Practice", fr: "Pratique du Yoga", es: "Práctica de Yoga", ar: "ممارسة اليوغا" },
     { id: "education", href: "education.html", en: "Education", fr: "Formation", es: "Formación", ar: "التعليم" },
+    { id: "faculty", href: "faculty.html", en: "Faculty", fr: "Corps enseignant", es: "Profesorado", ar: "هيئة التدريس" },
     { id: "events", href: "events.html", en: "Events &amp; Performance", fr: "Événements &amp; Performance", es: "Eventos y Rendimiento", ar: "الفعاليات والأداء" },
     { id: "contact", href: "contact.html", en: "Contact", fr: "Contact", es: "Contacto", ar: "اتصل بنا" }
   ];
