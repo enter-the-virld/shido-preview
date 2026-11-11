@@ -321,6 +321,27 @@
     dlg.showModal();
   }
   document.querySelectorAll("[data-profile]").forEach((b) => b.addEventListener("click", () => openProfile(b.dataset.profile)));
+
+  // Full faculty profiles, always visible on the Education page (re-rendered when the language changes)
+  const facList = document.getElementById("faculty-list");
+  if (facList) {
+    const renderFaculty = () => {
+      facList.innerHTML = Object.entries(faculty).map(([id, f]) => `
+        <article class="fac-profile" id="fac-${id}">
+          <div class="fp-media"><img src="${f.img}" alt="${f.name}" loading="lazy" style="object-position:${f.pos || "50% 20%"}"></div>
+          <div class="fp-body">
+            <span class="eyebrow">${pick(f.role)}</span>
+            <h3>${f.name}</h3>
+            <span class="meta">${pick(f.country)}</span>
+            ${f.desc ? `<p class="desc">${pick(f.desc)}</p>` : ""}
+            <div class="bio">${[].concat(pick(f.bio)).map((p) => `<p>${p}</p>`).join("")}</div>
+          </div>
+        </article>`).join("");
+    };
+    renderFaculty();
+    document.addEventListener("shido:lang", renderFaculty);
+    if (location.hash.startsWith("#fac-")) { const t = document.getElementById(location.hash.slice(1)); t && t.scrollIntoView(); }
+  }
   dlg && dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
 
   // ---------- Contact form (mailto hand-off until a form backend is connected) ----------
