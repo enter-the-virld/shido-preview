@@ -390,6 +390,9 @@ main { padding-top: var(--header-h); }
 .plate-fig { margin: 0; position: relative; }
 .plate-fig img { width: 100%; height: auto; }
 .plate-cap { margin-top: 16px; font-family: var(--serif); font-style: italic; font-size: .98rem; color: var(--muted); line-height: 1.4; }
+/* A study plate in a gold frame: the caption clears the frame's offset */
+.partner-plate { margin: 0; }
+.partner-plate .plate-cap { margin-top: calc(var(--off, 18px) + var(--s3)); }
 .on-dark .plate-cap { color: rgba(250, 247, 240, .6); }
 .plate-fig.float { max-width: 420px; }
 
