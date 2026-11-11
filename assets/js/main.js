@@ -10,7 +10,7 @@
   const INSTAGRAM = "https://www.instagram.com/shidomind.yoga";
   const LINKEDIN = "https://www.linkedin.com/company/shido-mind-yoga/";
   const MAPS = "https://www.google.com/maps/search/?api=1&query=36B+Boulevard+d%27Anfa+Casablanca+Morocco";
-  const LANGS = ["en", "fr", "es", "ar"];
+  const LANGS = ["en", "fr", "es", "it", "ar"];
   const AR_FONTS = "https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap";
 
   document.documentElement.classList.remove("no-js");
@@ -22,7 +22,7 @@
 
   // Translation helper: English is the default markup; the other languages live in data attributes.
   const esc = (s) => s.replace(/"/g, "&quot;");
-  const t = (en, fr, es, ar) => `<span data-fr="${esc(fr)}" data-es="${esc(es)}" data-ar="${esc(ar)}">${en}</span>`;
+  const t = (en, fr, es, ar, it) => `<span data-fr="${esc(fr)}" data-es="${esc(es)}" data-it="${esc(it)}" data-ar="${esc(ar)}">${en}</span>`;
 
   const icon = {
     arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>',
@@ -34,18 +34,18 @@
   window.SHIDO_ICONS = icon;
 
   const pages = [
-    { id: "home", href: "index.html", en: "Home", fr: "Accueil", es: "Inicio", ar: "الرئيسية" },
-    { id: "house", href: "house.html", en: "The House", fr: "La Maison", es: "La Casa", ar: "الدار" },
-    { id: "practice", href: "practice.html", en: "Yoga Practice", fr: "Pratique du Yoga", es: "Práctica de Yoga", ar: "ممارسة اليوغا" },
-    { id: "education", href: "education.html", en: "Education", fr: "Formation", es: "Formación", ar: "التعليم" },
-    { id: "faculty", href: "faculty.html", en: "Faculty", fr: "Corps enseignant", es: "Profesorado", ar: "هيئة التدريس" },
-    { id: "events", href: "events.html", en: "Events &amp; Performance", fr: "Événements &amp; Performance", es: "Eventos y Rendimiento", ar: "الفعاليات والأداء" },
-    { id: "contact", href: "contact.html", en: "Contact", fr: "Contact", es: "Contacto", ar: "اتصل بنا" }
+    { id: "home", href: "index.html", en: "Home", fr: "Accueil", es: "Inicio", ar: "الرئيسية", it: "Home" },
+    { id: "house", href: "house.html", en: "The House", fr: "La Maison", es: "La Casa", ar: "الدار", it: "La Casa" },
+    { id: "practice", href: "practice.html", en: "Yoga Practice", fr: "Pratique du Yoga", es: "Práctica de Yoga", ar: "ممارسة اليوغا", it: "Pratica dello Yoga" },
+    { id: "education", href: "education.html", en: "Education", fr: "Formation", es: "Formación", ar: "التعليم", it: "Formazione" },
+    { id: "faculty", href: "faculty.html", en: "Faculty", fr: "Corps enseignant", es: "Profesorado", ar: "هيئة التدريس", it: "Corpo docente" },
+    { id: "events", href: "events.html", en: "Events &amp; Performance", fr: "Événements &amp; Performance", es: "Eventos y Rendimiento", ar: "الفعاليات والأداء", it: "Eventi e Performance" },
+    { id: "contact", href: "contact.html", en: "Contact", fr: "Contact", es: "Contacto", ar: "اتصل بنا", it: "Contatti" }
   ];
   const current = document.body.dataset.page;
   const aria = (p) => (p.id === current ? ' aria-current="page"' : "");
-  const navLabel = (p) => t(p.en, p.fr, p.es, p.ar);
-  const BOOK = ["Book Your Practice", "Réserver votre pratique", "Reserve su práctica", "احجز حصتك"];
+  const navLabel = (p) => t(p.en, p.fr, p.es, p.ar, p.it);
+  const BOOK = ["Book Your Practice", "Réserver votre pratique", "Reserve su práctica", "احجز حصتك", "Prenota la tua pratica"];
   const bookBtn = (cls = "") =>
     `<a class="btn ${cls}" href="${BOOK_URL}" target="_blank" rel="noopener">${t(...BOOK)}${icon.arrow}</a>`;
   const langSwitch = () =>
@@ -56,7 +56,7 @@
   const header = document.getElementById("site-header");
   if (header) {
     header.outerHTML = `
-<a class="skip-link" href="#main">${t("Skip to content", "Aller au contenu", "Ir al contenido", "الانتقال إلى المحتوى")}</a>
+<a class="skip-link" href="#main">${t("Skip to content", "Aller au contenu", "Ir al contenido", "الانتقال إلى المحتوى", "Vai al contenuto")}</a>
 <header class="header${current === "home" ? " on-hero" : ""}" id="header">
   <div class="wrap">
     <a class="brand" href="index.html" aria-label="SHIDO® Home"><img class="logo-dark" src="assets/img/shido-logo-dark.png" alt="SHIDO Mind Yoga" width="818" height="564"><img class="logo-light" src="assets/img/shido-logo-light.png" alt="" aria-hidden="true" width="818" height="564"></a>
@@ -93,16 +93,16 @@
     <div class="footer-top">
       <div class="footer-brand">
         <img src="assets/img/shido-logo-light.png" alt="SHIDO Mind Yoga" width="818" height="564" loading="lazy">
-        <p class="serif">${t("A House of Yoga Education", "Une Maison d'Enseignement du Yoga", "Una Casa de Enseñanza del Yoga", "دارٌ لتعليم اليوغا")}</p>
-        <p class="mt-2">${t("Rooted in Yoga. Informed by Science. Dedicated to Longevity.", "Enraciné dans le Yoga. Éclairé par la science. Dédié à la longévité.", "Arraigada en el Yoga. Fundamentada en la ciencia. Dedicada a la longevidad.", "متجذّرة في اليوغا. مستنيرة بالعلم. مكرّسة لطول العمر.")}</p>
+        <p class="serif">${t("A House of Yoga Education", "Une Maison d'Enseignement du Yoga", "Una Casa de Enseñanza del Yoga", "دارٌ لتعليم اليوغا", "Una Casa di Insegnamento dello Yoga")}</p>
+        <p class="mt-2">${t("Rooted in Yoga. Informed by Science. Dedicated to Longevity.", "Enraciné dans le Yoga. Éclairé par la science. Dédié à la longévité.", "Arraigada en el Yoga. Fundamentada en la ciencia. Dedicada a la longevidad.", "متجذّرة في اليوغا. مستنيرة بالعلم. مكرّسة لطول العمر.", "Radicata nello Yoga. Guidata dalla scienza. Dedicata alla longevità.")}</p>
       </div>
       <div>
-        <h4>${t("The House", "La Maison", "La Casa", "الدار")}</h4>
+        <h4>${t("The House", "La Maison", "La Casa", "الدار", "La Casa")}</h4>
         <ul>${pages.filter((p) => p.id !== "home").map((p) => `<li><a href="${p.href}">${navLabel(p)}</a></li>`).join("")}</ul>
       </div>
       <div>
-        <h4>${t("Visit", "Nous rendre visite", "Visítenos", "زورونا")}</h4>
-        <address>SHIDO® · Casablanca<br>36B, Boulevard d'Anfa<br>${t("Casablanca, Morocco", "Casablanca, Maroc", "Casablanca, Marruecos", "الدار البيضاء، المغرب")}<br>
+        <h4>${t("Visit", "Nous rendre visite", "Visítenos", "زورونا", "Visitateci")}</h4>
+        <address>SHIDO® · Casablanca<br>36B, Boulevard d'Anfa<br>${t("Casablanca, Morocco", "Casablanca, Maroc", "Casablanca, Marruecos", "الدار البيضاء، المغرب", "Casablanca, Marocco")}<br>
           <a href="mailto:${EMAIL}">${EMAIL}</a><br><a href="tel:${PHONE_TEL}" dir="ltr">${PHONE_DISPLAY}</a></address>
         <div class="socials">
           <a href="${INSTAGRAM}" target="_blank" rel="noopener" aria-label="Instagram">${icon.ig}</a>
@@ -112,12 +112,12 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© ${new Date().getFullYear()} SHIDO®. ${t("All rights reserved.", "Tous droits réservés.", "Todos los derechos reservados.", "جميع الحقوق محفوظة.")}</span>
+      <span>© ${new Date().getFullYear()} SHIDO®. ${t("All rights reserved.", "Tous droits réservés.", "Todos los derechos reservados.", "جميع الحقوق محفوظة.", "Tutti i diritti riservati.")}</span>
       <nav class="footer-legal" aria-label="Legal">
-        <a href="confidentialite.html">${t("Privacy policy", "Politique de confidentialité", "Política de privacidad", "سياسة الخصوصية")}</a>
-        <a href="non-responsabilite.html">${t("Disclaimer", "Clause de non-responsabilité", "Exención de responsabilidad", "إخلاء المسؤولية")}</a>
+        <a href="confidentialite.html">${t("Privacy policy", "Politique de confidentialité", "Política de privacidad", "سياسة الخصوصية", "Informativa sulla privacy")}</a>
+        <a href="non-responsabilite.html">${t("Disclaimer", "Clause de non-responsabilité", "Exención de responsabilidad", "إخلاء المسؤولية", "Esclusione di responsabilità")}</a>
       </nav>
-      <span class="motto">${t("Rooted in tradition · Informed by science · Open to the world", "Enraciné dans la tradition · Éclairé par la science · Ouvert sur le monde", "Arraigada en la tradición · Fundamentada en la ciencia · Abierta al mundo", "متجذّرة في التقاليد · مستنيرة بالعلم · منفتحة على العالم")}</span>
+      <span class="motto">${t("Rooted in tradition · Informed by science · Open to the world", "Enraciné dans la tradition · Éclairé par la science · Ouvert sur le monde", "Arraigada en la tradición · Fundamentada en la ciencia · Abierta al mundo", "متجذّرة في التقاليد · مستنيرة بالعلم · منفتحة على العالم", "Radicata nella tradizione · Guidata dalla scienza · Aperta al mondo")}</span>
     </div>
   </div>
 </footer>`;
@@ -146,12 +146,12 @@
     root.lang = lang;
     root.dir = lang === "ar" ? "rtl" : "ltr";
     if (lang === "ar") loadArabicFonts();
-    document.querySelectorAll("[data-fr], [data-es], [data-ar]").forEach((el) => {
+    document.querySelectorAll("[data-fr], [data-es], [data-it], [data-ar]").forEach((el) => {
       if (el.dataset.en === undefined) el.dataset.en = el.innerHTML;
       const v = lang === "en" ? el.dataset.en : el.dataset[lang];
       el.innerHTML = v === undefined ? el.dataset.en : v;
     });
-    document.querySelectorAll("[data-fr-ph], [data-es-ph], [data-ar-ph]").forEach((el) => {
+    document.querySelectorAll("[data-fr-ph], [data-es-ph], [data-it-ph], [data-ar-ph]").forEach((el) => {
       if (el.dataset.enPh === undefined) el.dataset.enPh = el.placeholder;
       const v = lang === "en" ? el.dataset.enPh : el.dataset[lang + "Ph"];
       el.placeholder = v === undefined ? el.dataset.enPh : v;
@@ -202,7 +202,7 @@
   if (!reduceMotion && !session.get("shido-intro")) {
     session.set("shido-intro", "1");
     document.documentElement.classList.add("has-intro");
-    const line = { en: "House of Yoga Education", fr: "Maison d'Enseignement du Yoga", es: "Casa de Enseñanza del Yoga", ar: "دار تعليم اليوغا" }[lang];
+    const line = { en: "House of Yoga Education", fr: "Maison d'Enseignement du Yoga", es: "Casa de Enseñanza del Yoga", it: "Casa di Insegnamento dello Yoga", ar: "دار تعليم اليوغا" }[lang];
     document.body.insertAdjacentHTML("afterbegin",
       `<div class="intro" aria-hidden="true"><div class="intro-inner"><img src="assets/img/shido-mark-light.png" alt=""><span></span><small>${line}</small></div></div>`);
     const intro = document.querySelector(".intro");
@@ -363,7 +363,7 @@
   function openProfile(id) {
     const f = faculty[id];
     if (!f || !dlg) return;
-    const closeLabel = { en: "Close", fr: "Fermer", es: "Cerrar", ar: "إغلاق" }[lang];
+    const closeLabel = { en: "Close", fr: "Fermer", es: "Cerrar", it: "Chiudi", ar: "إغلاق" }[lang];
     const bio = [].concat(pick(f.bio)).map((p) => `<p>${p}</p>`).join("");
     dlg.innerHTML = `
       <button class="dialog-close" type="button" aria-label="${closeLabel}">${icon.close}</button>
@@ -498,6 +498,7 @@
         en: "Your email app is opening with your message ready to send. Thank you.",
         fr: "Votre messagerie s'ouvre avec votre message prêt à être envoyé. Merci.",
         es: "Su aplicación de correo se abre con el mensaje listo para enviar. Gracias.",
+        it: "La vostra app di posta si apre con il messaggio pronto da inviare. Grazie.",
         ar: "يُفتح تطبيق البريد الإلكتروني لديك ورسالتك جاهزة للإرسال. شكرًا لك."
       }[lang];
     });

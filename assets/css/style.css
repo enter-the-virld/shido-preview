@@ -809,6 +809,13 @@ html[lang="ar"] .lead { font-weight: 400; }
 html[lang="ar"] p, html[lang="ar"] .lead { hyphens: manual; }
 
 /* ---------- Responsive ---------- */
+/* Five languages with long labels (French, Italian, Spanish): tighten the bar before it collapses to the menu */
+@media (min-width: 1321px) and (max-width: 1640px) {
+  .header .wrap { gap: 20px; }
+  .nav { gap: 18px; }
+  .nav a { letter-spacing: .12em; }
+  .header-actions { gap: 14px; }
+}
 @media (max-width: 1320px) {
   .nav, .header-actions .btn, .header-actions .lang { display: none; }
   .menu-toggle { display: block; }
