@@ -695,12 +695,82 @@ img.parallax { scale: 1.1; will-change: translate; }
 @keyframes introIn { to { opacity: 1; transform: none; } }
 @keyframes introLine { to { width: 132px; } }
 
+/* ---------- Headline reveal ---------- */
+.hl.reveal { opacity: 1; transform: none; }
+.hl .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .08em .14em 0; margin: 0 -.08em -.14em 0; }
+.hl .wi { display: inline-block; translate: 0 108%; transition: translate 1.15s var(--ease); transition-delay: calc(min(var(--i, 0), 22) * 42ms); }
+.hl.in .wi { translate: 0 0; }
+.hero-home .hero-copy > h1 { animation: none; }
+
+/* ---------- Scroll reveal additions ---------- */
+.img-reveal img { clip-path: inset(100% 0 0 0); transition: scale 1.8s var(--ease), clip-path 1.4s cubic-bezier(.77, 0, .18, 1); }
+.img-reveal.in img { clip-path: inset(0 0 0 0); }
+hr.rule.reveal { opacity: 1; transform: scaleX(0); transform-origin: left center; transition: transform 1.2s var(--ease) .2s; }
+[dir="rtl"] hr.rule.reveal { transform-origin: right center; }
+hr.rule.reveal.in { transform: scaleX(1); }
+.eyebrow.reveal::before { width: 0; transition: width 1s var(--ease) .15s; }
+.eyebrow.reveal.in::before { width: 32px; }
+.scroll-progress { position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 120; background: linear-gradient(90deg, var(--gold-soft), var(--gold)); transform: scaleX(0); transform-origin: left center; pointer-events: none; }
+[dir="rtl"] .scroll-progress { transform-origin: right center; }
+
+/* ---------- Micro-interactions ---------- */
+.btn { transition: color .6s var(--ease), border-color .6s var(--ease), translate .5s var(--ease), scale .2s var(--ease); }
+.btn:active { scale: .97; }
+.link-arrow:hover { animation: uline .9s var(--ease); }
+@keyframes uline { 0% { background-size: 100% 1px; background-position: 100% 100%; } 45% { background-size: 0 1px; background-position: 100% 100%; } 46% { background-size: 0 1px; background-position: 0 100%; } 100% { background-size: 100% 1px; background-position: 0 100%; } }
+.practice-card h3, .fac-card h3, .prog h3 { transition: color .4s, translate .5s var(--ease); }
+.practice-card:hover h3, .fac-card:hover h3, .prog:hover h3 { color: var(--violet); translate: 6px 0; }
+.info li svg, .channels a strong { transition: translate .4s var(--ease); }
+.info li:hover svg { translate: 0 -2px; }
+.channels a:hover strong { translate: 6px 0; }
+.checklist li::before { transition: width .4s var(--ease); }
+.checklist li:hover::before { width: 20px; }
+.focus-grid > div h4 { transition: translate .5s var(--ease); }
+.focus-grid > div:hover h4 { translate: 0 -4px; }
+.socials a svg { transition: transform .5s var(--ease); }
+.socials a:hover svg { transform: rotate(-8deg) scale(1.08); }
+
+/* ---------- Faculty showcase (portfolio index) ---------- */
+.fac-showcase { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); counter-reset: none; }
+.fac-showcase a { display: grid; grid-template-columns: 56px 1fr auto 40px; align-items: center; gap: var(--s3); padding: clamp(18px, 2.4vw, 30px) 0; border-bottom: 1px solid var(--line); transition: opacity .5s var(--ease), padding .6s var(--ease); }
+.fs-n { font-family: var(--serif); font-style: italic; color: var(--gold-ink); font-size: 1rem; }
+.fs-name { font-family: var(--serif); font-weight: 300; font-size: clamp(2.1rem, 5.2vw, 4.6rem); line-height: 1.05; letter-spacing: -.015em; transition: color .4s, translate .6s var(--ease); }
+.fs-meta { font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); text-align: end; line-height: 1.9; }
+.fs-arrow { justify-self: end; color: var(--violet); opacity: 0; translate: -10px 0; transition: opacity .4s, translate .5s var(--ease); }
+.fs-arrow svg { width: 22px; height: 22px; }
+.fs-thumb { display: none; }
+.fac-showcase.hovering a { opacity: .32; }
+.fac-showcase a:hover, .fac-showcase a:focus-visible { opacity: 1; }
+.fac-showcase a:hover .fs-name, .fac-showcase a:focus-visible .fs-name { color: var(--violet); translate: 14px 0; }
+[dir="rtl"] .fac-showcase a:hover .fs-name { translate: -14px 0; }
+.fac-showcase a:hover .fs-arrow { opacity: 1; translate: 0 0; }
+.fs-float { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; width: 240px; aspect-ratio: 3 / 4; opacity: 0; scale: .85; transition: opacity .4s var(--ease), scale .5s var(--ease); }
+.fs-float.on { opacity: 1; scale: 1; }
+.fs-frame { position: relative; width: 100%; height: 100%; overflow: hidden; box-shadow: 0 30px 60px -24px rgba(37, 26, 61, .45); }
+.fs-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: var(--grade); clip-path: inset(0 0 100% 0); scale: 1.12; transition: clip-path .7s cubic-bezier(.77, 0, .18, 1), scale 1s var(--ease); }
+.fs-frame img.on { clip-path: inset(0 0 0 0); scale: 1; }
+@media (hover: none), (max-width: 960px) {
+  .fs-float { display: none; }
+  .fac-showcase a { grid-template-columns: 76px 1fr; gap: 6px var(--s2); }
+  .fs-n, .fs-arrow { display: none; }
+  .fs-thumb { display: block; grid-row: span 2; width: 76px; aspect-ratio: 3 / 4; object-fit: cover; filter: var(--grade); }
+  .fs-name { font-size: 1.7rem; align-self: end; }
+  .fs-meta { text-align: start; align-self: start; font-size: .6rem; }
+}
+/* Profiles: the portrait stays in view while the biography scrolls */
+@media (min-width: 961px) { .fp-media { position: sticky; top: calc(var(--header-h) + var(--s4)); } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .reveal { opacity: 1; transform: none; }
-  .img-reveal img, img.parallax { scale: 1; translate: none; }
+  .img-reveal img, img.parallax { scale: 1; translate: none; clip-path: none; }
+  .eyebrow.reveal::before { width: 32px; }
+  hr.rule.reveal { transform: none; }
 }
 .no-js .reveal { opacity: 1; transform: none; }
+.no-js .img-reveal img { clip-path: none; }
+.no-js .eyebrow.reveal::before { width: 32px; }
+.no-js hr.rule.reveal { transform: none; }
 
 /* ---------- Right-to-left (Arabic) ---------- */
 [dir="rtl"] .framed { box-shadow: calc(var(--off) * -1) var(--off) 0 -1px var(--frame-bg), calc(var(--off) * -1) var(--off) 0 0 var(--gold-line); }

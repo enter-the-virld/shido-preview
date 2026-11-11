@@ -286,6 +286,65 @@
     frame();
   }
 
+  // ---------- Headline reveal: headings rise word by word from behind a mask ----------
+  const headSel = "main h1, main h2, .dim-text h3, .triad h3, .manifesto .statement, .feature h3";
+  const splitWords = (el) => {
+    const walk = (node) => {
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          if (!n.textContent.trim()) return;
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            const w = document.createElement("span"); w.className = "w";
+            const wi = document.createElement("span"); wi.className = "wi"; wi.textContent = part;
+            w.appendChild(wi); frag.appendChild(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && !n.classList.contains("w") && n.tagName !== "BR") walk(n);
+      });
+    };
+    walk(el);
+    el.querySelectorAll(".wi").forEach((w, i) => w.style.setProperty("--i", i));
+  };
+  if (!reduceMotion) {
+    const heads = [...document.querySelectorAll(headSel)];
+    heads.forEach((h) => { h.classList.add("hl"); splitWords(h); });
+    const hio = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add("in"); hio.unobserve(en.target); } });
+    }, { rootMargin: "0px 0px -10% 0px" });
+    heads.forEach((h) => {
+      if (h.closest(".hero-home")) setTimeout(() => h.classList.add("in"), document.documentElement.classList.contains("has-intro") ? 1500 : 200);
+      else hio.observe(h);
+    });
+    document.addEventListener("shido:lang", () => heads.forEach(splitWords));
+
+    // Scroll progress hairline and slowly turning study plates
+    document.body.insertAdjacentHTML("beforeend", '<div class="scroll-progress" aria-hidden="true"></div>');
+    const prog = document.querySelector(".scroll-progress");
+    const plates = [...document.querySelectorAll(".page-hero .plate, .hero-home .plate, .footer .plate")];
+    let pt = false;
+    const onFrame = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      prog.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+      plates.forEach((pl) => { pl.style.rotate = `${(scrollY * 0.025).toFixed(2)}deg`; });
+      pt = false;
+    };
+    addEventListener("scroll", () => { if (!pt) { pt = true; requestAnimationFrame(onFrame); } }, { passive: true });
+    onFrame();
+
+    // Magnetic buttons: they lean gently towards the pointer
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      document.addEventListener("pointermove", (e) => {
+        const b = e.target.closest(".btn"); if (!b) return;
+        const r = b.getBoundingClientRect();
+        b.style.translate = `${((e.clientX - r.left) / r.width - 0.5) * 10}px ${((e.clientY - r.top) / r.height - 0.5) * 8}px`;
+      });
+      document.addEventListener("pointerout", (e) => { const b = e.target.closest(".btn"); if (b && !b.contains(e.relatedTarget)) b.style.translate = ""; });
+    }
+  }
+
   // ---------- Reveal on scroll ----------
   const revealables = document.querySelectorAll(".reveal, .img-reveal");
   if ("IntersectionObserver" in window) {
@@ -341,6 +400,39 @@
     };
     renderFaculty();
     document.addEventListener("shido:lang", renderFaculty);
+
+    // Portfolio-style index: large names, the portrait follows the cursor on hover
+    const show = document.getElementById("faculty-showcase");
+    const float = document.querySelector(".fs-float");
+    if (show && float) {
+      const frame = float.querySelector(".fs-frame");
+      const ids = Object.keys(faculty);
+      frame.innerHTML = ids.map((id) => `<img src="${faculty[id].img}" alt="" data-id="${id}" style="object-position:${faculty[id].pos || "50% 20%"}">`).join("");
+      const renderShow = () => {
+        show.innerHTML = ids.map((id, i) => { const f = faculty[id]; return `
+          <li><a href="#fac-${id}" data-id="${id}">
+            <span class="fs-n">${String(i + 1).padStart(2, "0")}</span>
+            <img class="fs-thumb" src="${f.img}" alt="" loading="lazy" style="object-position:${f.pos || "50% 20%"}">
+            <span class="fs-name">${f.name}</span>
+            <span class="fs-meta">${pick(f.country)}<br>${pick(f.role)}</span>
+            <span class="fs-arrow">${icon.arrow}</span>
+          </a></li>`; }).join("");
+      };
+      renderShow();
+      document.addEventListener("shido:lang", renderShow);
+      const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      if (fine && !reduceMotion) {
+        let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+        const loop = () => { x += (tx - x) * 0.14; y += (ty - y) * 0.14; float.style.transform = `translate(${x}px, ${y}px)`; raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.3 ? requestAnimationFrame(loop) : 0; };
+        show.addEventListener("pointermove", (e) => { tx = e.clientX + 28; ty = e.clientY - 150; if (!raf) raf = requestAnimationFrame(loop); });
+        show.addEventListener("pointerover", (e) => {
+          const a = e.target.closest("a[data-id]"); if (!a) return;
+          show.classList.add("hovering"); float.classList.add("on");
+          frame.querySelectorAll("img").forEach((im) => im.classList.toggle("on", im.dataset.id === a.dataset.id));
+        });
+        show.addEventListener("pointerleave", () => { show.classList.remove("hovering"); float.classList.remove("on"); });
+      }
+    }
     if (location.hash.startsWith("#fac-")) { const t = document.getElementById(location.hash.slice(1)); t && t.scrollIntoView(); }
   }
   dlg && dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
