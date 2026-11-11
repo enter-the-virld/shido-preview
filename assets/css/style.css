@@ -730,6 +730,10 @@ hr.rule.reveal.in { transform: scaleX(1); }
 .socials a svg { transition: transform .5s var(--ease); }
 .socials a:hover svg { transform: rotate(-8deg) scale(1.08); }
 
+/* ---------- Home: layered section transitions ---------- */
+:where(body[data-page="home"] main > section) { background-color: var(--ivory); }
+body[data-page="home"] main > section > .wrap, body[data-page="home"] .hero-foot { transform-origin: 50% 0; will-change: transform, opacity; }
+
 /* ---------- Faculty showcase (portfolio index) ---------- */
 .fac-showcase { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); counter-reset: none; }
 .fac-showcase a { display: grid; grid-template-columns: 56px 1fr auto 40px; align-items: center; gap: var(--s3); padding: clamp(18px, 2.4vw, 30px) 0; border-bottom: 1px solid var(--line); transition: opacity .5s var(--ease), padding .6s var(--ease); }

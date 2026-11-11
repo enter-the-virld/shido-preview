@@ -401,41 +401,81 @@
     renderFaculty();
     document.addEventListener("shido:lang", renderFaculty);
 
-    // Portfolio-style index: large names, the portrait follows the cursor on hover
+    // Portfolio-style index: rendered from the faculty data (behaviour is shared with the home strip below)
     const show = document.getElementById("faculty-showcase");
-    const float = document.querySelector(".fs-float");
-    if (show && float) {
-      const frame = float.querySelector(".fs-frame");
-      const ids = Object.keys(faculty);
-      frame.innerHTML = ids.map((id) => `<img src="${faculty[id].img}" alt="" data-id="${id}" style="object-position:${faculty[id].pos || "50% 20%"}">`).join("");
+    if (show) {
       const renderShow = () => {
-        show.innerHTML = ids.map((id, i) => { const f = faculty[id]; return `
-          <li><a href="#fac-${id}" data-id="${id}">
+        show.innerHTML = Object.entries(faculty).map(([id, f], i) => `
+          <li><a href="#fac-${id}" data-img="${f.img}" data-pos="${f.pos || "50% 20%"}">
             <span class="fs-n">${String(i + 1).padStart(2, "0")}</span>
             <img class="fs-thumb" src="${f.img}" alt="" loading="lazy" style="object-position:${f.pos || "50% 20%"}">
             <span class="fs-name">${f.name}</span>
             <span class="fs-meta">${pick(f.country)}<br>${pick(f.role)}</span>
             <span class="fs-arrow">${icon.arrow}</span>
-          </a></li>`; }).join("");
+          </a></li>`).join("");
       };
       renderShow();
       document.addEventListener("shido:lang", renderShow);
-      const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-      if (fine && !reduceMotion) {
-        let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
-        const loop = () => { x += (tx - x) * 0.14; y += (ty - y) * 0.14; float.style.transform = `translate(${x}px, ${y}px)`; raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.3 ? requestAnimationFrame(loop) : 0; };
-        show.addEventListener("pointermove", (e) => { tx = e.clientX + 28; ty = e.clientY - 150; if (!raf) raf = requestAnimationFrame(loop); });
-        show.addEventListener("pointerover", (e) => {
-          const a = e.target.closest("a[data-id]"); if (!a) return;
-          show.classList.add("hovering"); float.classList.add("on");
-          frame.querySelectorAll("img").forEach((im) => im.classList.toggle("on", im.dataset.id === a.dataset.id));
-        });
-        show.addEventListener("pointerleave", () => { show.classList.remove("hovering"); float.classList.remove("on"); });
-      }
     }
     if (location.hash.startsWith("#fac-")) { const t = document.getElementById(location.hash.slice(1)); t && t.scrollIntoView(); }
   }
   dlg && dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+
+  // ---------- Faculty showcase: hover a name and the portrait follows the cursor ----------
+  document.querySelectorAll(".fac-showcase").forEach((show) => {
+    const float = show.parentElement.querySelector(".fs-float");
+    if (!float || reduceMotion || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const frame = float.querySelector(".fs-frame");
+    const imgFor = (a) => {
+      let im = [...frame.querySelectorAll("img")].find((x) => x.dataset.src === a.dataset.img);
+      if (!im) {
+        im = document.createElement("img"); im.alt = ""; im.src = a.dataset.img; im.dataset.src = a.dataset.img;
+        im.style.objectPosition = a.dataset.pos || "50% 20%"; frame.appendChild(im); im.getBoundingClientRect();
+      }
+      return im;
+    };
+    show.querySelectorAll("a[data-img]").forEach(imgFor);
+    let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+    const loop = () => { x += (tx - x) * 0.14; y += (ty - y) * 0.14; float.style.transform = `translate(${x}px, ${y}px)`; raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.3 ? requestAnimationFrame(loop) : 0; };
+    show.addEventListener("pointermove", (e) => {
+      // Keep the portrait in the gap right of the names, so it never covers the name being read
+      const r = show.getBoundingClientRect(), w = float.offsetWidth;
+      const lane = isRTL() ? r.left + r.width * 0.38 - w : r.left + r.width * 0.62;
+      tx = isRTL() ? Math.min(e.clientX - w - 40, lane) : Math.max(e.clientX + 40, lane);
+      ty = e.clientY - float.offsetHeight / 2;
+      if (!raf) raf = requestAnimationFrame(loop);
+    });
+    show.addEventListener("pointerover", (e) => {
+      const a = e.target.closest("a[data-img]"); if (!a) return;
+      const im = imgFor(a);
+      show.classList.add("hovering"); float.classList.add("on");
+      frame.querySelectorAll("img").forEach((x) => x.classList.toggle("on", x === im));
+    });
+    show.addEventListener("pointerleave", () => { show.classList.remove("hovering"); float.classList.remove("on"); });
+  });
+
+  // ---------- Home: sections recede as the next one slides over them ----------
+  if (current === "home" && !reduceMotion) {
+    const secs = [...document.querySelectorAll("main > section")].filter((sec) => !sec.classList.contains("gallery"));
+    const layers = secs.map((sec) => [...sec.querySelectorAll(":scope > .wrap, :scope > .hero-foot")]);
+    let rt = false;
+    const recede = () => {
+      const vh = innerHeight;
+      secs.forEach((sec, i) => {
+        const r = sec.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (vh - r.bottom) / vh)); // 0 until the section's foot enters the screen, 1 once it has left
+        layers[i].forEach((el) => {
+          if (p <= 0) { el.style.transform = ""; el.style.opacity = ""; return; }
+          el.style.transform = `translate3d(0, ${(p * vh * 0.32).toFixed(1)}px, 0) scale(${(1 - p * 0.05).toFixed(4)})`;
+          el.style.opacity = (1 - p * 0.75).toFixed(3);
+        });
+      });
+      rt = false;
+    };
+    addEventListener("scroll", () => { if (!rt) { rt = true; requestAnimationFrame(recede); } }, { passive: true });
+    addEventListener("resize", recede);
+    recede();
+  }
 
   // ---------- Contact form (mailto hand-off until a form backend is connected) ----------
   const form = document.getElementById("contact-form");
